@@ -13,15 +13,19 @@ grey_base = ['#FFFFFF', '#E3E3E3']
 
 
 def createColour(base, end, cols, final):
+    # Base background colours
     base_cmap = col.LinearSegmentedColormap.from_list('custom', base, N=256)
     base_cols = base_cmap(np.linspace(0, 1, 256-end))
 
+    # Accent colours
     extra_cmap = col.LinearSegmentedColormap.from_list('custom', cols, N=256)
     extra_cols = extra_cmap(np.linspace(0, 1, end-1))
 
+    # Final colour
     final_cmap = col.LinearSegmentedColormap.from_list('custom', [final, final], N = 5)
     final_col = final_cmap(np.linspace(0, 1, 2))
 
+    # Join the colours
     cmap = np.vstack((base_cols, extra_cols, final_col))
     return col.ListedColormap(cmap)
 
@@ -43,11 +47,13 @@ def JuliaOutline(xrang, yrang, c, points, point_size, iters=100, col='#070861'):
 
 
 def FilledJulia(xrang, yrang, c, points, maxiters, filename):
+    # Generate grid of points
     X = np.linspace(*xrang, points)
     Y = np.linspace(*yrang, points)
     Z_r, Z_i = np.meshgrid(X, Y)
     counter = np.zeros((points, points))
 
+    # This substantially speeds up the computation
     vmultiply = np.vectorize(multiply)
     counter = vmultiply(Z_r, Z_i, counter, c, maxiters)
 
@@ -59,16 +65,20 @@ def display(filename, base, end, cols, final, save):
     cmap = createColour(base, end, cols, final)
     plt.imshow(np.flipud(counter), cmap=cmap)
     plt.axis('off')
-    #plt.colorbar()
+
     if save:
         plt.savefig(f"{filename}.png",bbox_inches='tight')
+
     plt.show()
 
 
 def multiply(Z_r, Z_i, counter, c, maxiters):
     i = 0
     while i < maxiters:
+        #Apply the escape time approximation
         if Z_r*Z_r + Z_i*Z_i < (1+np.abs(c))**2:
+
+            # Iterate
             newZ_r = Z_r*Z_r - Z_i*Z_i + np.real(c)
             newZ_i = 2*Z_r*Z_i + np.imag(c)
             counter += 1
@@ -80,11 +90,12 @@ def multiply(Z_r, Z_i, counter, c, maxiters):
 
     return counter
 
-def mMultiply(C_r, C_i, maxiters, counter):
+def mandMultiply(C_r, C_i, maxiters, counter):
     Z_r = 0
     Z_i = 0
     i = 0
     while i < maxiters:
+        # Implement the escape time approximation
         if Z_r**2 + Z_i**2 < 4:
             newZ_r = Z_r**2 - Z_i**2 + C_r
             newZ_i = 2*Z_r*Z_i + C_i
@@ -100,12 +111,14 @@ def mMultiply(C_r, C_i, maxiters, counter):
 
 
 def Mandelbrot(xrang, yrang, points, maxiters, filename):
+    # Generate grid of points
     X = np.linspace(*xrang, points)
     Y = np.linspace(*yrang, points)
     C_r, C_i = np.meshgrid(X, Y)
     counter = np.zeros((points, points))
 
-    vmult = np.vectorize(mMultiply)
+    # Computation is much faster
+    vmult = np.vectorize(mandMultiply)
 
     counter = vmult(C_r, C_i, maxiters, counter)
     np.save(filename, counter)
