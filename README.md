@@ -31,3 +31,11 @@ Similarly for the Filled Julia Set, `K_c`, all points are at a distance less tha
 * `display('babyMandl', red_base, 120, ['#FF3A3A', '#3D3AFF', '#DC47FF'], '#000000', True)`
 * `display('littleMandl', purpl_base, 130, ['#FF3A3A', '#3D3AFF', '#DC47FF'], '#000000', True)`
 * `display('valley_julia', blue_base, 110, ['#9844ff', '#5200b7'], '#000000', True)`
+
+### Julia Set
+* `JuliaOutline((-1, 1), (-1, 1), c=-0.123+1j*0.745, points=50000, point_size=1)`
+* `JuliaOutline((-1, 1), (-1, 1), c=1j, points=50000, point_size=0.5)`
+* `JuliaOutline((-1, 1), (-1, 1), c=0.32+0.043*1j, points=50000, point_size=0.5)`
+* `JuliaOutline((-1, 1), (-1, 1), c=0.355 + 0.355*1j, points=50000, point_size=1)`
+* `JuliaOutline((-1, 1), (-1, 1), c=-1.75, points=50000, point_size=1)`
+* `JuliaOutline((-1, 1), (-1, 1), c=0, points=50000, point_size=1)`
