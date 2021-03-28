@@ -30,6 +30,8 @@ def createColour(base, end, cols, final):
     return col.ListedColormap(cmap)
 
 
+############# JULIA SET #############
+
 def JuliaOutline(xrang, yrang, c, points, point_size, iters=100, col='#070861'):
     # Generate a grid between the specified ranges
     X = np.random.uniform(*xrang, points)
@@ -45,32 +47,7 @@ def JuliaOutline(xrang, yrang, c, points, point_size, iters=100, col='#070861'):
     plt.axis('off')
     plt.show()
 
-
-def FilledJulia(xrang, yrang, c, points, maxiters, filename):
-    # Generate grid of points
-    X = np.linspace(*xrang, points)
-    Y = np.linspace(*yrang, points)
-    Z_r, Z_i = np.meshgrid(X, Y)
-    counter = np.zeros((points, points))
-
-    # This substantially speeds up the computation
-    vmultiply = np.vectorize(multiply)
-    counter = vmultiply(Z_r, Z_i, counter, c, maxiters)
-
-    np.save(filename, counter)
-
-
-def display(filename, base, end, cols, final, save):
-    counter = np.load(f'{filename}.npy', 'r')
-    cmap = createColour(base, end, cols, final)
-    plt.imshow(np.flipud(counter), cmap=cmap)
-    plt.axis('off')
-
-    if save:
-        plt.savefig(f"{filename}.png",bbox_inches='tight')
-
-    plt.show()
-
+############# FILLED JULIA SET #############
 
 def multiply(Z_r, Z_i, counter, c, maxiters):
     i = 0
@@ -89,6 +66,22 @@ def multiply(Z_r, Z_i, counter, c, maxiters):
             break
 
     return counter
+
+
+def FilledJulia(xrang, yrang, c, points, maxiters, filename):
+    # Generate grid of points
+    X = np.linspace(*xrang, points)
+    Y = np.linspace(*yrang, points)
+    Z_r, Z_i = np.meshgrid(X, Y)
+    counter = np.zeros((points, points))
+
+    # This substantially speeds up the computation
+    vmultiply = np.vectorize(multiply)
+    counter = vmultiply(Z_r, Z_i, counter, c, maxiters)
+
+    np.save(filename, counter)
+
+############# MANDELBROT SET #############
 
 def mandMultiply(C_r, C_i, maxiters, counter):
     Z_r = 0
@@ -122,3 +115,16 @@ def Mandelbrot(xrang, yrang, points, maxiters, filename):
 
     counter = vmult(C_r, C_i, maxiters, counter)
     np.save(filename, counter)
+
+############# DISPLAY #############
+
+def display(filename, base, end, cols, final, save):
+    counter = np.load(f'{filename}.npy', 'r')
+    cmap = createColour(base, end, cols, final)
+    plt.imshow(np.flipud(counter), cmap=cmap)
+    plt.axis('off')
+
+    if save:
+        plt.savefig(f"{filename}.png",bbox_inches='tight')
+
+    plt.show()
